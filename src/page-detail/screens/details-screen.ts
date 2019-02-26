@@ -1,6 +1,15 @@
+import '@progress/kendo-ui/js/kendo.dropdownlist';
+import '@progress/kendo-ui/js/kendo.slider';
+import './details-screen.css';
+
 import $ from "jquery";
+
 import { PtUser } from "../../core/models/domain";
 import { DetailsScreenModel, PtItemDetailsScreenProps } from "./details-screen-model";
+import { PtItemType } from "../../core/models/domain/types";
+import { ItemType } from "../../core/constants";
+import { PriorityEnum } from '../../core/models/domain/enums';
+import { getIndicatorClass } from '../../shared/helpers/priority-styling';
 
 let detailsScreenModel: DetailsScreenModel = undefined;
 
@@ -26,6 +35,7 @@ $(document).on('click', '.pt-assignee-item', (e) => {
 });
 
 function onFieldChange(e: any) {
+    debugger;
     const fieldObj = $(e.currentTarget);
     const fieldName = fieldObj.attr('name');
     (detailsScreenModel.itemForm as any)[fieldName] = fieldObj.val();
@@ -36,6 +46,20 @@ function onNonTextFieldChange(e: any) {
     detailsScreenModel.notifyUpdateItem();
 }
 
+function templateDdItemTypeMarkup(t: PtItemType): string {
+    const markup = `
+            <img src="${ItemType.imageResFromType(t)}" class="backlog-icon" />
+            <span>${t}</span>
+        `;
+    return markup;
+}
+
+function templateDdPriorityMarkup(p: PriorityEnum): string {
+    const markup = `
+        <span class="${'badge ' + getIndicatorClass(p)}">${p}</span>
+    `;
+    return markup;
+}
 
 export function renderScreenDetails(model: DetailsScreenModel) {
     detailsScreenModel = model;
@@ -55,40 +79,95 @@ export function renderScreenDetails(model: DetailsScreenModel) {
     $('#detailScreenContainer').html(renderedHtml);
     $('#imgAssigneeAvatar').attr('src', detailsScreenModel.selectedAssignee.avatar);
 
-    const selectItemTypeObj = $('#selItemType');
-    $.each(detailsScreenModel.itemTypesProvider, (key, value) => {
-        selectItemTypeObj.append($("<option></option>")
-            .attr("value", value)
-            .text(value));
-    });
-    selectItemTypeObj
-        .val(detailsScreenModel.itemForm.typeStr)
-        .change(onNonTextFieldChange);
+    const ddlItemTypeOptions: kendo.ui.DropDownListOptions = {
+        dataSource: detailsScreenModel.itemTypesProvider,
+        change: (e: kendo.ui.DropDownListChangeEvent) => {
+            detailsScreenModel.itemForm.typeStr = e.sender.value();
+            detailsScreenModel.notifyUpdateItem();
+        },
+        value: detailsScreenModel.itemForm.typeStr,
+        template: templateDdItemTypeMarkup
+    };
+    $('#selItemType').kendoDropDownList(ddlItemTypeOptions);
 
-    const selectStatusObj = $('#selStatus');
-    $.each(detailsScreenModel.statusesProvider, (key, value) => {
-        selectStatusObj.append($("<option></option>")
-            .attr("value", value)
-            .text(value));
-    });
-    selectStatusObj
-        .val(detailsScreenModel.itemForm.statusStr)
-        .change(onNonTextFieldChange);
+    /*
+        $.each(detailsScreenModel.itemTypesProvider, (key, value) => {
+            selectItemTypeObj.append($("<option></option>")
+                .attr("value", value)
+                .text(value));
+        });
+        selectItemTypeObj
+            .val(detailsScreenModel.itemForm.typeStr)
+            .change(onNonTextFieldChange);
+            */
 
-    const selectPriorityObj = $('#selPriority');
-    $.each(detailsScreenModel.prioritiesProvider, (key, value) => {
-        selectPriorityObj.append($("<option></option>")
-            .attr("value", value)
-            .text(value));
-    });
-    selectPriorityObj
-        .val(detailsScreenModel.itemForm.priorityStr)
-        .change(onNonTextFieldChange);
+    const ddlStatusOptions: kendo.ui.DropDownListOptions = {
+        dataSource: detailsScreenModel.statusesProvider,
+        change: (e: kendo.ui.DropDownListChangeEvent) => {
+            detailsScreenModel.itemForm.statusStr = e.sender.value();
+            detailsScreenModel.notifyUpdateItem();
+        },
+        value: detailsScreenModel.itemForm.statusStr
+    };
+    $('#selStatus').kendoDropDownList(ddlStatusOptions);
 
+    /*
+const selectStatusObj = $('#selStatus');
+$.each(detailsScreenModel.statusesProvider, (key, value) => {
+selectStatusObj.append($("<option></option>")
+    .attr("value", value)
+    .text(value));
+});
+selectStatusObj
+.val(detailsScreenModel.itemForm.statusStr)
+.change(onNonTextFieldChange);
+*/
+
+    const ddlPriorityOptions: kendo.ui.DropDownListOptions = {
+        dataSource: detailsScreenModel.prioritiesProvider,
+        change: (e: kendo.ui.DropDownListChangeEvent) => {
+            detailsScreenModel.itemForm.priorityStr = e.sender.value();
+            detailsScreenModel.notifyUpdateItem();
+        },
+        value: detailsScreenModel.itemForm.priorityStr,
+        template: templateDdPriorityMarkup
+    };
+    $('#selPriority').kendoDropDownList(ddlPriorityOptions);
+
+    /*
+        const selectPriorityObj = $('#selPriority');
+        $.each(detailsScreenModel.prioritiesProvider, (key, value) => {
+            selectPriorityObj.append($("<option></option>")
+                .attr("value", value)
+                .text(value));
+        });
+        selectPriorityObj
+            .val(detailsScreenModel.itemForm.priorityStr)
+            .change(onNonTextFieldChange);
+            */
+
+    const estimateOptions: kendo.ui.SliderOptions = {
+        increaseButtonTitle: "Right",
+        decreaseButtonTitle: "Left",
+        min: -10,
+        max: 10,
+        smallStep: 2,
+        largeStep: 1,
+        value: detailsScreenModel.itemForm.estimate,
+        change: (e: kendo.ui.SliderChangeEvent) => {
+            detailsScreenModel.itemForm.estimate = e.value;
+            detailsScreenModel.notifyUpdateItem();
+        }
+    };
+
+    $("#inputEstimate").kendoSlider(estimateOptions);
+
+    /*
     const inputEstimateObj = $('#inputEstimate');
     inputEstimateObj
         .val(detailsScreenModel.itemForm.estimate)
         .change(onNonTextFieldChange);
+        */
 }
 
 
