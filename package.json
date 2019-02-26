@@ -1,0 +1,40 @@
+{
+  "name": "rpstrackerkendoui",
+  "version": "1.0.0",
+  "dependencies": {
+    "bootstrap": "4.3.1",
+    "@progress/kendo-ui": "2019.1.213",
+    "jquery": "^3.3.1",
+    "kendo-ui-core": "2019.1.213",
+    "lodash": "^4.17.11",
+    "rxjs": "6.4.0"
+  },
+  "devDependencies": {
+    "@types/bootstrap": "4.2.2",
+    "@types/jquery": "^3.3.29",
+    "@types/kendo-ui": "2019.1.0",
+    "@types/lodash": "4.14.121",
+    "copy-webpack-plugin": "^4.6.0",
+    "copyfiles": "^2.1.0",
+    "css-loader": "2.1.0",
+    "file-loader": "^3.0.1",
+    "style-loader": "^0.23.1",
+    "ts-loader": "^5.3.3",
+    "typescript": "^3.3.3",
+    "webpack": "^4.29.3",
+    "webpack-cli": "^3.2.3",
+    "webpack-dev-server": "^3.1.14",
+    "webpack-node-externals": "1.7.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "copy": "copyfiles -u 1 ./src/styles.css ./src/index.html ./src/assets/**/*.* ./dist",
+    "build": "webpack && npm run copy",
+    "watch": "webpack --watch",
+    "start": "npm run copy && webpack-dev-server --open"
+  },
+  "author": "",
+  "license": "ISC",
+  "main": "index.js",
+  "description": ""
+}
