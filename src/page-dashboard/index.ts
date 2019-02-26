@@ -6,6 +6,7 @@ import './active-issues.css';
 import $ from "jquery";
 import "bootstrap/dist/js/bootstrap";
 import '@progress/kendo-ui/js/kendo.buttongroup';
+import '@progress/kendo-ui/js/kendo.dataviz.chart';
 
 import { DashboardPageModel } from './dashboard-page-model';
 
@@ -35,6 +36,10 @@ $(() => {
             const range = Number($(e.currentTarget).attr('data-range'));
             dashboardPageModel.onMonthRangeSelected(range);
         });
+
+    $("#chart").kendoChart({
+        title: 'All Issues'
+    });
 });
 
 
