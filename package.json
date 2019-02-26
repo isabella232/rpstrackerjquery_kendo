@@ -5,7 +5,6 @@
     "bootstrap": "4.3.1",
     "@progress/kendo-ui": "2019.1.213",
     "jquery": "^3.3.1",
-    "kendo-ui-core": "2019.1.213",
     "lodash": "^4.17.11",
     "rxjs": "6.4.0"
   },
