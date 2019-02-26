@@ -1,13 +1,13 @@
-//import 'kendo-ui-core/css/web/kendo.common.css';
-//import 'kendo-ui-core/css/web/kendo.default.min.css';
-
 import "bootstrap/dist/css/bootstrap.css";
+import '@progress/kendo-ui/css/web/kendo.default-v2.min.css';
+
 import '../styles.css';
 import './backlog.css';
 
-
 import $ from "jquery";
 import "bootstrap/dist/js/bootstrap";
+import '@progress/kendo-ui/js/kendo.button';
+import '@progress/kendo-ui/js/kendo.dropdownlist';
 
 import { PtItem } from "../core/models/domain";
 import { ItemType } from "../core/constants";
@@ -47,12 +47,15 @@ function renderTableRow(item: PtItem): string {
 
 $(() => {
 
+    $('#btnAddNewItem').kendoButton({ icon: 'plus' });
+
     const newItemTypeSelectObj = $('#newItemType');
     $.each(backlogPageModel.itemTypesProvider, (key, value) => {
         newItemTypeSelectObj.append($("<option></option>")
             .attr("value", value)
             .text(value));
     });
+    newItemTypeSelectObj.kendoDropDownList();
 
     $('.btn-backlog-filter').click((e) => {
         const selPreset = $(e.currentTarget).attr('data-preset') as PresetType;
