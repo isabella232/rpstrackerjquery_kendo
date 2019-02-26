@@ -76,7 +76,7 @@ export function renderScreenDetails(model: DetailsScreenModel) {
         .replace(/{{description}}/ig, detailsScreenModel.itemForm.description)
         .replace(/{{assigneeName}}/ig, detailsScreenModel.itemForm.assigneeName);
 
-    $('#detailScreenContainer').html(renderedHtml);
+    $('#detailsScreenContainer').html(renderedHtml);
     $('#imgAssigneeAvatar').attr('src', detailsScreenModel.selectedAssignee.avatar);
 
     const ddlItemTypeOptions: kendo.ui.DropDownListOptions = {

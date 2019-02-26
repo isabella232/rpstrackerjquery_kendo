@@ -46,7 +46,7 @@ export function renderScreenTasks(model: TasksScreenModel) {
     });
     const tasksTemplate = $('#tasksTemplate').html();
     const renderedHtml = tasksTemplate;
-    $('#detailScreenContainer').html(renderedHtml);
+    $('#tasksScreenContainer').html(renderedHtml);
 }
 
 

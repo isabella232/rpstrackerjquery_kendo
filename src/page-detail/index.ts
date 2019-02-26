@@ -5,6 +5,7 @@ import '../styles.css';
 
 import $ from "jquery";
 import "bootstrap/dist/js/bootstrap";
+import '@progress/kendo-ui/js/kendo.tabstrip';
 
 import { PtItem } from "../core/models/domain";
 import { pushUrl, getQueryParameter } from '../utils/url';
@@ -20,6 +21,12 @@ import { renderScreenChitchat } from "./screens/chitchat-screen";
 const reqScreen = getQueryParameter('screen') as DetailScreenType;
 const reqItemId = Number(getQueryParameter('itemId'));
 const detailPageModel = new DetailPageModel(reqScreen, reqItemId);
+
+function resetAllScreens() {
+    $("#detailsScreenContainer").empty();
+    $("#tasksScreenContainer").empty();
+    $("#chitchatScreenContainer").empty();
+}
 
 function createScreenDetails(detailPageModel: DetailPageModel) {
     const modelProps: PtItemDetailsScreenProps = {
@@ -61,6 +68,7 @@ function createScreenChitchat(detailPageModel: DetailPageModel) {
 detailPageModel.item$.subscribe(item => {
     if (item) {
         renderPageChanges(item);
+        resetAllScreens();
         switch (detailPageModel.currentScreen) {
             case 'details':
                 createScreenDetails(detailPageModel);
@@ -78,6 +86,19 @@ detailPageModel.item$.subscribe(item => {
 });
 
 $(() => {
+
+    const tabstripOptions: kendo.ui.TabStripOptions = {
+        select: (e: kendo.ui.TabStripSelectEvent) => {
+            const selScreen = e.item.textContent.trim().toLowerCase() as DetailScreenType;
+            pushUrl('', 'page-detail/detail.html', `?screen=${selScreen}&itemId=${detailPageModel.itemId}`);
+            detailPageModel.currentScreen = selScreen;
+            detailPageModel.refresh();
+        }
+    };
+    // Set the active tab BEFORE making a tabstrip
+    $(`[data-tab-title="${detailPageModel.currentScreen}"]`).addClass('k-state-active');
+    $('#tabstrip').kendoTabStrip(tabstripOptions);
+
     $('.btn-screen-switch').click((e) => {
         const selScreen = $(e.currentTarget).attr('data-screen') as DetailScreenType;
         pushUrl('', 'page-detail/detail.html', `?screen=${selScreen}&itemId=${detailPageModel.itemId}`);

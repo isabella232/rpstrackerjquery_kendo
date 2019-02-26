@@ -36,7 +36,7 @@ export function renderScreenChitchat(model: ChitchatScreenModel) {
 
     const commentsTemplate = $('#chitchatTemplate').html();
     const renderedHtml = commentsTemplate;
-    $('#detailScreenContainer').html(renderedHtml);
+    $('#chitchatScreenContainer').html(renderedHtml);
     $('#imgCurrentUserAvatar').attr('src', chitchatScreenModel.props.currentUser.avatar);
 }
 
