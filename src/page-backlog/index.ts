@@ -8,8 +8,9 @@ import $ from "jquery";
 import "bootstrap/dist/js/bootstrap";
 import '@progress/kendo-ui/js/kendo.button';
 import '@progress/kendo-ui/js/kendo.dropdownlist';
+import '@progress/kendo-ui/js/kendo.grid';
 
-import { PtItem } from "../core/models/domain";
+import { PtItem, PtUser } from "../core/models/domain";
 import { ItemType } from "../core/constants";
 import { getIndicatorClass } from "../shared/helpers/priority-styling";
 import { BacklogPageModel } from './backlog-page-model';
@@ -19,9 +20,13 @@ import { PtNewItem } from '../shared/models/dto/pt-new-item';
 
 const reqPreset = getQueryParameter('preset') as PresetType;
 const backlogPageModel = new BacklogPageModel(reqPreset);
+let ptGrid: kendo.ui.Grid = null;
 
 backlogPageModel.items$.subscribe(items => {
     $('#itemsTableBody').html(renderTableRows(items));
+    if (items && ptGrid) {
+        ptGrid.dataSource.data(items);
+    }
 });
 
 function getIndicatorImage(item: PtItem) {
@@ -43,6 +48,28 @@ function renderTableRow(item: PtItem): string {
         <td><span class="li-date">${item.dateCreated.toDateString()}</span></td>
     </tr>
     `;
+}
+
+function getItemTypeCellMarkup(item: PtItem) {
+    return `<img src="${getIndicatorImage(item)}" class="backlog-icon" />`;
+}
+
+function getAssigneeCellMarkup(item: PtItem) {
+    const user = item.assignee;
+    return `
+    <div>
+      <img src="${user.avatar}" class="li-avatar rounded mx-auto" />
+      <span style="margin-left: 10px;">${user.fullName}</span>
+    </div>
+  `;
+}
+function getPriorityCellMarkup(item: PtItem) {
+    return `<span class="${'badge ' + getIndicatorClass(item.priority)}">${
+        item.priority
+        }</span>`;
+}
+function getCreatedDateCellMarkup(item: PtItem) {
+    return `<span class="li-date">${item.dateCreated.toDateString()}</span>`;
 }
 
 $(() => {
@@ -80,8 +107,23 @@ $(() => {
         const itemId = $(e.currentTarget).attr('data-id');
         window.location.href = `/page-detail/detail.html?screen=details&itemId=${itemId}`;
     });
+
+    const ptGridOptions: kendo.ui.GridOptions = {
+        columns: [
+            { field: 'type', title: ' ', template: getItemTypeCellMarkup, width: 45 },
+            { field: 'assignee', title: 'Assignee', template: getAssigneeCellMarkup, width: 260 },
+            { field: 'title', title: 'Title' },
+            { field: 'priority', title: 'Priority', template: getPriorityCellMarkup, width: 100 },
+            { field: 'estimate', title: 'Estimate', width: 100 },
+            { field: 'dateCreated', title: 'Created', template: getCreatedDateCellMarkup, width: 160 },
+        ]
+    };
+    ptGrid = $('#grid').kendoGrid(ptGridOptions).data('kendoGrid');
+
+    backlogPageModel.refresh();
 });
 
 
-backlogPageModel.refresh();
+
+
 
