@@ -28,6 +28,45 @@ dashboardPageModel.statusCounts$.subscribe(results => {
     }
 });
 
+dashboardPageModel.dataForChart$.subscribe(data => {
+    if (data) {
+        $("#chart").kendoChart({
+            title: 'All Issues',
+            categoryAxis: {
+                categories: data.categories,
+                baseUnit: 'months',
+                majorGridLines: { visible: false },
+                labels: { rotation: 'auto' }
+            },
+            seriesDefaults: {
+                gap: 0.06,
+                stack: true,
+                type: 'column'
+            },
+            series: [
+                {
+                    name: 'Open',
+                    data: data.itemsOpenByMonth,
+                    color: '#CC3458',
+                    opacity: 0.7
+                },
+                {
+                    name: 'Closed',
+                    data: data.itemsClosedByMonth,
+                    color: '#35C473',
+                    opacity: 0.7
+                },
+            ],
+            legend: {
+                position: 'bottom'
+            },
+            theme: 'sass'
+
+        });
+    }
+});
+
+
 $(() => {
     $('.btn-group').kendoButtonGroup();
     $('.pt-class-range-filter')
@@ -36,12 +75,7 @@ $(() => {
             const range = Number($(e.currentTarget).attr('data-range'));
             dashboardPageModel.onMonthRangeSelected(range);
         });
-
-    $("#chart").kendoChart({
-        title: 'All Issues'
-    });
 });
-
 
 dashboardPageModel.refresh();
 
