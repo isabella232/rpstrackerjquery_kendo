@@ -109,13 +109,25 @@ $(() => {
     });
 
     const ptGridOptions: kendo.ui.GridOptions = {
+        dataSource: {
+            data: [],
+            pageSize: 10
+        },
+        height: 410,
+        sortable: true,
+        columnMenu: true,
+        pageable: {
+            refresh: true,
+            pageSizes: true,
+            buttonCount: 5
+        },
         columns: [
-            { field: 'type', title: ' ', template: getItemTypeCellMarkup, width: 45 },
+            { field: 'type', title: ' ', menu: false, template: getItemTypeCellMarkup, width: 45 },
             { field: 'assignee', title: 'Assignee', template: getAssigneeCellMarkup, width: 260 },
             { field: 'title', title: 'Title' },
             { field: 'priority', title: 'Priority', template: getPriorityCellMarkup, width: 100 },
             { field: 'estimate', title: 'Estimate', width: 100 },
-            { field: 'dateCreated', title: 'Created', template: getCreatedDateCellMarkup, width: 160 },
+            { field: 'dateCreated', title: 'Created', template: getCreatedDateCellMarkup, width: 160, filterable: {} },
         ]
     };
     ptGrid = $('#grid').kendoGrid(ptGridOptions).data('kendoGrid');
