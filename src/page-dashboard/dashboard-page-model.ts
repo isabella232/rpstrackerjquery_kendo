@@ -1,8 +1,12 @@
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 
+import { Store } from "../core/state/app-store";
+import { PtUserService } from "../core/services/pt-user-service";
 import { DashboardRepository, DashboardFilter, FilteredIssues } from "../core/services/dashboard.repository";
 import { DashboardService } from "../core/services/dashboard.service";
 import { StatusCounts } from "../shared/models/ui";
+import { PtUser } from "../core/models/domain";
+
 
 interface DateRange {
     dateStart: Date;
@@ -17,13 +21,19 @@ interface DataForChart {
 
 export class DashboardPageModel {
 
+    private store: Store = new Store();
     private dashboardRepo: DashboardRepository = new DashboardRepository();
     private dashboardService: DashboardService = new DashboardService(this.dashboardRepo);
+    private userService: PtUserService = new PtUserService(this.store);
 
     public filter$: BehaviorSubject<DashboardFilter> = new BehaviorSubject<DashboardFilter>({});
     public statusCounts$: BehaviorSubject<StatusCounts> = new BehaviorSubject<StatusCounts>(undefined);
 
     public dataForChart$: BehaviorSubject<DataForChart> = new BehaviorSubject<DataForChart>(undefined);
+
+    public users$: Observable<PtUser[]> = this.store.select<PtUser[]>('users');
+
+    public selectedUserIdStr: string = '';
 
     /*
         public categories: Date[] = [];
@@ -71,6 +81,19 @@ export class DashboardPageModel {
                 });
                 */
         }
+    }
+
+    public usersRequested() {
+        this.userService.fetchUsers();
+    }
+
+    public userFilterValueChange() {
+        if (this.selectedUserIdStr) {
+            this.filter$.value.userId = Number(this.selectedUserIdStr);
+        } else {
+            this.filter$.value.userId = undefined;
+        }
+        this.refresh();
     }
 
     private updateStats(issuesAll: FilteredIssues) {

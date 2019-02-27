@@ -7,10 +7,12 @@ import $ from "jquery";
 import "bootstrap/dist/js/bootstrap";
 import '@progress/kendo-ui/js/kendo.buttongroup';
 import '@progress/kendo-ui/js/kendo.dataviz.chart';
+import '@progress/kendo-ui/js/kendo.combobox';
 
 import { DashboardPageModel } from './dashboard-page-model';
 
 const dashboardPageModel = new DashboardPageModel();
+let comboboxAssignee: kendo.ui.ComboBox = null;
 
 dashboardPageModel.filter$.subscribe(filter => {
     if (filter && filter.dateStart && filter.dateEnd) {
@@ -66,9 +68,32 @@ dashboardPageModel.dataForChart$.subscribe(data => {
     }
 });
 
+dashboardPageModel.users$.subscribe(users => {
+    if (users && comboboxAssignee) {
+        comboboxAssignee.dataSource.data(users);
+    }
+});
 
 $(() => {
-    $('.btn-group').kendoButtonGroup();
+    const comboboxAssigneeOptions: kendo.ui.ComboBoxOptions = {
+        dataSource: [],
+        dataTextField: 'fullName',
+        dataValueField: 'id',
+        open: () => dashboardPageModel.usersRequested(),
+        change: (e: kendo.ui.ComboBoxChangeEvent) => {
+            dashboardPageModel.selectedUserIdStr = e.sender.value();
+            dashboardPageModel.userFilterValueChange();
+        },
+        template: `
+            <div class="row" style="margin-left: 5px;">
+                <img class="li-avatar rounded mx-auto d-block" src=#=avatar# />
+                <span style="margin-left: 5px;">#= fullName #</span>
+            </div>
+        `
+    };
+    comboboxAssignee = $('#inputAssignee').kendoComboBox(comboboxAssigneeOptions).data('kendoComboBox');
+
+    $('.pt-range-filter-group').kendoButtonGroup();
     $('.pt-class-range-filter')
         //.kendoButton()
         .click((e) => {
