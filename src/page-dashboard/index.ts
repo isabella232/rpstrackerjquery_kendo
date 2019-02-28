@@ -1,10 +1,10 @@
-import "bootstrap/dist/css/bootstrap.css";
-import '@progress/kendo-ui/css/web/kendo.default-v2.min.css';
-import '../styles.css';
+import '../shared/style-imports';
 import './active-issues.css';
+
 
 import $ from "jquery";
 import "bootstrap/dist/js/bootstrap";
+
 import '@progress/kendo-ui/js/kendo.buttongroup';
 import '@progress/kendo-ui/js/kendo.dataviz.chart';
 import '@progress/kendo-ui/js/kendo.combobox';

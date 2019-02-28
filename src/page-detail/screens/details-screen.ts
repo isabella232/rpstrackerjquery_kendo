@@ -1,8 +1,8 @@
-import '@progress/kendo-ui/js/kendo.dropdownlist';
-import '@progress/kendo-ui/js/kendo.slider';
 import './details-screen.css';
 
 import $ from "jquery";
+import '@progress/kendo-ui/js/kendo.dropdownlist';
+import '@progress/kendo-ui/js/kendo.slider';
 
 import { PtUser } from "../../core/models/domain";
 import { DetailsScreenModel, PtItemDetailsScreenProps } from "./details-screen-model";
