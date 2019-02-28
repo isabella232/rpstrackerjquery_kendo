@@ -72,6 +72,11 @@ function getCreatedDateCellMarkup(item: PtItem) {
     return `<span class="li-date">${item.dateCreated.toDateString()}</span>`;
 }
 
+function onGridChange(e: kendo.ui.GridChangeEvent) {
+    const item = ptGrid.dataItem(e.sender.select()).toJSON() as PtItem;
+    window.location.href = `/page-detail/detail.html?screen=details&itemId=${item.id}`;
+}
+
 $(() => {
 
     $('#btnAddNewItem').kendoButton({ icon: 'plus' });
@@ -116,6 +121,8 @@ $(() => {
         height: 410,
         sortable: true,
         columnMenu: true,
+        selectable: true,
+        change: onGridChange,
         pageable: {
             refresh: true,
             pageSizes: true,
