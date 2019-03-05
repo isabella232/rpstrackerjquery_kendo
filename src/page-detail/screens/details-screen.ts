@@ -147,12 +147,11 @@ selectStatusObj
             */
 
     const estimateOptions: kendo.ui.SliderOptions = {
-        increaseButtonTitle: "Right",
-        decreaseButtonTitle: "Left",
-        min: -10,
-        max: 10,
-        smallStep: 2,
-        largeStep: 1,
+        increaseButtonTitle: "More",
+        decreaseButtonTitle: "Less",
+        min: 0,
+        max: 20,
+        smallStep: 1,
         value: detailsScreenModel.itemForm.estimate,
         change: (e: kendo.ui.SliderChangeEvent) => {
             detailsScreenModel.itemForm.estimate = e.value;
