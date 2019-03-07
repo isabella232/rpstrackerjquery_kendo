@@ -6,13 +6,14 @@ import $ from "jquery";
 import "bootstrap/dist/js/bootstrap";
 
 import '@progress/kendo-ui/js/kendo.buttongroup';
-import '@progress/kendo-ui/js/kendo.dataviz.chart';
 import '@progress/kendo-ui/js/kendo.combobox';
+import '@progress/kendo-ui/js/kendo.dataviz.chart';
 
 import { DashboardPageModel } from './dashboard-page-model';
 
 const dashboardPageModel = new DashboardPageModel();
 let comboboxAssignee: kendo.ui.ComboBox = null;
+let issuesChart: kendo.dataviz.ui.Chart = null;
 
 dashboardPageModel.filter$.subscribe(filter => {
     if (filter && filter.dateStart && filter.dateEnd) {
@@ -31,7 +32,28 @@ dashboardPageModel.statusCounts$.subscribe(results => {
 });
 
 dashboardPageModel.dataForChart$.subscribe(data => {
-    if (data) {
+    if (data && issuesChart) {
+        issuesChart.setOptions(
+            {
+                categoryAxis: {
+                    categories: data.categories
+                },
+                series: [
+                    {
+                        name: 'Open',
+                        data: data.itemsOpenByMonth,
+                        color: '#CC3458',
+                        opacity: 0.7
+                    },
+                    {
+                        name: 'Closed',
+                        data: data.itemsClosedByMonth,
+                        color: '#35C473',
+                        opacity: 0.7
+                    },
+                ]
+            });
+        /*
         $("#chart").kendoChart({
             title: 'All Issues',
             categoryAxis: {
@@ -65,6 +87,7 @@ dashboardPageModel.dataForChart$.subscribe(data => {
             theme: 'sass'
 
         });
+        */
     }
 });
 
@@ -100,6 +123,41 @@ $(() => {
             const range = Number($(e.currentTarget).attr('data-range'));
             dashboardPageModel.onMonthRangeSelected(range);
         });
+
+
+    issuesChart = $("#chart").kendoChart({
+        title: 'All Issues',
+        categoryAxis: {
+            categories: [],
+            baseUnit: 'months',
+            majorGridLines: { visible: false },
+            labels: { rotation: 'auto' }
+        },
+        seriesDefaults: {
+            gap: 0.06,
+            stack: true,
+            type: 'column'
+        },
+        series: [
+            {
+                name: 'Open',
+                data: [],
+                color: '#CC3458',
+                opacity: 0.7
+            },
+            {
+                name: 'Closed',
+                data: [],
+                color: '#35C473',
+                opacity: 0.7
+            },
+        ],
+        legend: {
+            position: 'bottom'
+        },
+        theme: 'sass'
+
+    }).data('kendoChart');
 });
 
 dashboardPageModel.refresh();
